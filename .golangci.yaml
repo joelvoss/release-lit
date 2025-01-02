@@ -1,0 +1,15 @@
+# https://golangci-lint.run/usage/configuration/
+---
+
+run:
+  timeout: 5m
+
+linters:
+  disable-all: true
+  enable: # NOTE(joel): Please keep list sorted alphabetically
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
