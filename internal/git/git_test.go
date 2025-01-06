@@ -121,6 +121,23 @@ func TestGetTags(t *testing.T) {
 	assert.Equal(t, "v0.0.1", tags[2].Original)
 }
 
+func TestGetTags2(t *testing.T) {
+	cwd, cleanUp := createGitRepo(t)
+	defer cleanUp()
+
+	commits := []TestCommit{
+		{Msg: "Commit #1"},
+		{Msg: "Commit #2"},
+		{Msg: "Commit #3"},
+	}
+	createCommits(t, cwd, commits)
+
+	tags, err := GetTags(&GitOpts{RootDir: cwd})
+	assert.NoError(t, err)
+	assert.Len(t, tags, 0)
+	assert.Empty(t, tags)
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestGetTagHead(t *testing.T) {
@@ -137,7 +154,16 @@ func TestGetTagHead(t *testing.T) {
 	sha, err := GetTagHead("v0.1.0", &GitOpts{RootDir: cwd})
 	assert.NoError(t, err)
 	assert.NotEmpty(t, sha)
-	assert.Equal(t, expectedShas[1], sha)
+	assert.Equal(t, sha, expectedShas[1])
+}
+
+func TestGetTagHead2(t *testing.T) {
+	cwd, cleanUp := createGitRepo(t)
+	defer cleanUp()
+
+	sha, err := GetTagHead("", &GitOpts{RootDir: cwd})
+	assert.NoError(t, err)
+	assert.Equal(t, sha, "")
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -204,7 +230,8 @@ func TestGetCommitsNoCommits(t *testing.T) {
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "Error getting commits")
 	}
-	assert.Nil(t, commits)
+	assert.Len(t, commits, 0)
+	assert.Empty(t, commits)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -55,25 +55,44 @@ func main() {
 
 			// NOTE(joel): Get sha of latest tag to use as a reference point from
 			// where new commits are analyzed.
-			sha, err := git.GetTagHead(tags[0].Original, nil)
-			if err != nil {
-				return cli.Exit(err, 1)
+			// If there are no tags, we set the sha to an empty string.
+			var sha string
+			if len(tags) == 0 {
+				sha = ""
+			} else {
+				sha, err = git.GetTagHead(tags[0].Original, nil)
+				if err != nil {
+					return cli.Exit(err, 1)
+				}
 			}
 
-			// NOTE(joel): Get commits since latest tag.
+			// NOTE(joel): Get commits since latest tag sha. If there are no tags, we
+			// get all commits (for the changelog).
 			commits, err := git.GetCommits(sha, nil)
 			if err != nil {
 				return cli.Exit(err, 1)
 			}
 
-			// NOTE(joel): Get next release type.
-			nextRelease := git.GetNextReleaseType(commits)
+			var newVersion *semver.Version
+			// NOTE(joel): Define new version based on release type and the last
+			// valid tagged version. If there are no tags, we start with version
+			// "1.0.0" regardless of the release type.
+			if len(tags) == 0 {
+				newVersion, err = semver.Parse("1.0.0")
+				if err != nil {
+					return cli.Exit(err, 1)
+				}
+			} else {
+				// NOTE(joel): Get next release type based on commits since last tag
+				// (or all commits if there are no tags).
+				nextRelease := git.GetNextReleaseType(commits)
 
-			// NOTE(joel): Bump version based on release type.
-			// Create a copy of the first tag to use as a reference point.
-			newVersion, err := semver.Bump(*tags[0], nextRelease)
-			if err != nil {
-				return cli.Exit(err, 1)
+				// NOTE(joel): We pass the latest tag by value to the `Bump` function
+				// to avoid modifying the original tag.
+				newVersion, err = semver.Bump(*tags[0], nextRelease)
+				if err != nil {
+					return cli.Exit(err, 1)
+				}
 			}
 
 			// NOTE(joel): Generate changelog and write to file

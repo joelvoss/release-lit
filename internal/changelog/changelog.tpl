@@ -2,6 +2,10 @@
 
 ## {{ .Version }} - {{ .Date }}{{"\n"}}
 
+{{- if eq (len .Commits) 0 }}
+- No changes
+{{ end}}
+
 {{- if (index .Commits 0) }}
 ### BREAKING CHANGES
 {{- range (index .Commits 0) }}

@@ -145,3 +145,32 @@ func TestGenerate(t *testing.T) {
 Some old content
 `)
 }
+
+func TestGenerate2(t *testing.T) {
+	tempDir, cleanUp := prepareChangelog(t)
+	defer cleanUp()
+
+	// NOTE(joel): Mock time
+	now = func() time.Time {
+		return time.Date(2006, 1, 2, 15, 4, 5, 0, time.UTC)
+	}
+
+	commits := make([]*git.Commit, 0)
+	newVersion, _ := semver.Parse("1.0.0")
+
+	filepath := path.Join(tempDir, "./CHANGELOG.md")
+	err := Generate(commits, newVersion, filepath)
+
+	require.NoError(t, err)
+	require.FileExists(t, filepath)
+	assertFileContent(t, filepath, `# Changelog
+
+## 1.0.0 - 2006-01-02
+
+- No changes
+
+## 0.0.0 - 2006-01-02
+
+Some old content
+`)
+}

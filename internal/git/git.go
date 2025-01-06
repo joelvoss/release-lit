@@ -65,7 +65,11 @@ func GetTags(opts *GitOpts) ([]*semver.Version, error) {
 
 	tags := strings.Split(strings.TrimSpace(string(output)), "\n")
 
-	parsedTags := make([]*semver.Version, 0, len(tags))
+	parsedTags := make([]*semver.Version, 0)
+	if len(tags) == 0 || (len(tags) == 1 && tags[0] == "") {
+		return parsedTags, nil
+	}
+
 	for _, tag := range tags {
 		parsed, err := semver.Parse(tag)
 		if err == nil {
@@ -82,6 +86,10 @@ func GetTags(opts *GitOpts) ([]*semver.Version, error) {
 
 // GetTagHead gets the sha1 of the commit that the tag points to.
 func GetTagHead(tag string, opts *GitOpts) (string, error) {
+	if tag == "" {
+		return "", nil
+	}
+
 	cmd := exec.Command("git", "rev-list", "-n", "1", tag)
 	if opts != nil && opts.RootDir != "" {
 		cmd.Dir = opts.RootDir
@@ -131,7 +139,11 @@ func GetCommits(sha string, opts *GitOpts) ([]*Commit, error) {
 	splits := strings.Split(string(output), "==DEL==\n")
 
 	// NOTE(joel): Create commit structs from the splits.
+	// If there are no commits, return an empty slice.
 	commits := make([]*Commit, 0)
+	if len(splits) == 0 || (len(splits) == 1 && splits[0] == "") {
+		return commits, nil
+	}
 	for _, s := range splits {
 		s = strings.TrimSpace(s)
 		s = strings.TrimSuffix(s, "==DEL==")
