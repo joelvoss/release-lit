@@ -13,8 +13,8 @@ import (
 
 const (
 	releaseMessage = "chore(release): v%s"
-	releaseAuthor  = "release-me-bot"
-	releaseEmail   = "bot@release-me"
+	releaseAuthor  = "release-lit-bot"
+	releaseEmail   = "bot@release-lit"
 )
 
 type GitOpts struct {

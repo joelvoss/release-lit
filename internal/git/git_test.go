@@ -259,4 +259,6 @@ func TestCreateRelease(t *testing.T) {
 	output, err = cmd.Output()
 	require.NoError(t, err)
 	assert.Contains(t, string(output), "chore(release): v2.0.0")
+	assert.Contains(t, string(output), "Tagger: release-lit-bot <bot@release-lit>")
+	assert.Contains(t, string(output), "Author: release-lit-bot <bot@release-lit>")
 }
