@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 - 2025-01-06
+
+### Bug Fixes
+- set correct release author and email (d2e7f7b)
+
 ## 0.2.0 - 2025-01-06
 
 ### Features
