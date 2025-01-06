@@ -13,6 +13,7 @@ build_dev() {
     -ldflags="-X main.version=${VERSION}" \
     -o ./bin/${NAME} ./cmd/${NAME}
 
+  cp ./bin/${NAME} ./
   cp ./bin/${NAME} ./e2e/golang
   cp ./bin/${NAME} ./e2e/node
   cp ./bin/${NAME} ./e2e/python
