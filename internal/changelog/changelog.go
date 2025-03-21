@@ -50,8 +50,15 @@ func Generate(commits []*git.Commit, newVersion *semver.Version, filepath string
 		if err != nil {
 			return err
 		}
-		// NOTE(joel): Append the old changelog to the new one (without the header)
-		_, err = b.Write(oldChangelog[len("# Changelog\n"):])
+		// NOTE(joel): Append the old changelog to the new one (and remove the
+		// header if it exists)
+		idx := bytes.Index(oldChangelog, []byte("# Changelog\n"))
+		if idx == -1 {
+			idx = 0
+		} else {
+			idx += len("# Changelog\n")
+		}
+		_, err = b.Write(oldChangelog[idx:])
 		if err != nil {
 			return err
 		}
