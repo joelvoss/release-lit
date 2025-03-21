@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2 - 2025-03-21
+
+### Bug Fixes
+- **changelog:** don't crash if a previous changelog file does not contain the expected header string (1c0e0ed)
+
 ## 0.2.1 - 2025-01-06
 
 ### Bug Fixes
